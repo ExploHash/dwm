@@ -210,6 +210,7 @@ static void spawn(const Arg *arg);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void tile(Monitor *);
+static void gappstile(Monitor *);
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
 static void toggletag(const Arg *arg);
@@ -1672,30 +1673,69 @@ tagmon(const Arg *arg)
 }
 
 void
-tile(Monitor *m)
-{
-	unsigned int i, n, h, mw, my, ty;
+tile(Monitor *m) {
+	unsigned int i, n, h, r, g = 0, mw, my, ty;
 	Client *c;
 
+	//Count clients
 	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
+
 	if (n == 0)
 		return;
 
-	if (n > m->nmaster)
-		mw = m->nmaster ? m->ww * m->mfact : 0;
+	if(n > m->nmaster)//If more windows than possible master windows
+		mw = m->nmaster ? (m->ww - (g = gappx)) * m->mfact : 0; //Window width
 	else
-		mw = m->ww;
-	for (i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
-		if (i < m->nmaster) {
-			h = (m->wh - my) / (MIN(n, m->nmaster) - i);
-			resize(c, m->wx, m->wy + my, mw - (2*c->bw), h - (2*c->bw), 0);
-			if (my + HEIGHT(c) < m->wh)
-				my += HEIGHT(c);
-		} else {
-			h = (m->wh - ty) / (n - i);
-			resize(c, m->wx + mw, m->wy + ty, m->ww - mw - (2*c->bw), h - (2*c->bw), 0);
-			if (ty + HEIGHT(c) < m->wh)
-				ty += HEIGHT(c);
+		mw = m->ww; //If only one that means full
+	
+
+	for(i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
+		if(i < m->nmaster) {//If in master
+			r = MIN(n, m->nmaster) - i;
+			h = (m->wh - my - gappx * (r - 1)) / r;
+			resize(c, m->wx + gappx, m->wy + my + gappx, mw - (2*c->bw), h - (2*c->bw), False);
+			my += HEIGHT(c) + gappx;
+		}
+		else {//If not in master
+			r = n - i;
+			h = (m->wh - ty - gappx * (r - 1)) / r;
+			resize(c, m->wx + mw + g, m->wy + ty, m->ww - mw - g - (2*c->bw), h - (2*c->bw), False);
+			ty += HEIGHT(c) + gappx;
+		}
+}
+
+void
+gappstile(Monitor *monitor) {
+	// unsigned int i, n, h, r, g = 0, mw, my, ty;
+	unsigned int index, clientCount, startX, startY, height, width, areaHeight, areaWidth, clientWidth, nonMasterIndex, nonMasterClientsCount;
+	Client *client;
+
+	//Count clients
+	for (clientCount = 0, client = nexttiled(monitor->clients); client; client = nexttiled(client->next), clientCount++);
+
+	if (clientCount == 0)
+		return;
+
+	startX = monitor->wx + gappx;
+	startY = monitor->wy + gappx;
+	areaHeight = monitor->wh - (gappx * 2);
+	areaWidth = monitor->ww - (gappx * 2);
+	clientWidth = (areaWidth - gappx) / 2;
+	nonMasterClientsCount = clientCount - monitor->nmaster;
+
+
+	for(index = 0, client = nexttiled(monitor->clients); client; client = nexttiled(client->next), index++)
+		if(index < monitor->nmaster) {//If in master
+			height = (areaHeight - (gappx * (monitor->nmaster - 1))) / monitor->nmaster;
+			width = clientCount > monitor->nmaster ? clientWidth : areaWidth;
+
+			resize(client, startX, startY + (index * (height + gappx)), width, height, False);
+		}
+		else {//If not in master
+			nonMasterIndex = index - monitor->nmaster;
+			height = (areaHeight - (gappx * (nonMasterClientsCount - 1))) / nonMasterClientsCount;
+
+			resize(client, startX + clientWidth + gappx, startY + (nonMasterIndex * (height + gappx)), clientWidth, height, False);
 		}
 }
 
@@ -2127,6 +2167,13 @@ zoom(const Arg *arg)
 	pop(c);
 }
 
+void
+runAutoStart(void){
+	for(int i = 0; i < LENGTH(autostart); i++){
+		system(autostart[i]);
+	}
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -2145,6 +2192,7 @@ main(int argc, char *argv[])
 		die("pledge");
 #endif /* __OpenBSD__ */
 	scan();
+	runAutoStart();
 	run();
 	cleanup();
 	XCloseDisplay(dpy);

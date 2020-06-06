@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    ".env": "shellscript",
+    "*.config": "yaml",
+    "random": "c"
+  }
+}
