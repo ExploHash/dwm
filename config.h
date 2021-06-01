@@ -20,7 +20,7 @@ static const char *colors[][3]      = {
 };
 
 /* tagging */
-static const char *tags[] = { "Browser", "Code", "Utilities", "4", "5", "6", "7", "8", "9"};
+static const char *tags[] = { "Browser", "Code", "Utilities", "4", "5", "6", "7", "8", "Music"};
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -28,9 +28,11 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "firefox",  NULL,       NULL,       1,       0,           -1 },
-	{ "code-oss",  NULL,       NULL,       1 << 1,       0,           -1 },
+	{ "Firefox",  NULL,       NULL,       1,       0,           -1 },
+	{ "Code",  NULL,       NULL,       1 << 1,       0,           -1 },
 	{ "DBeaver",  NULL,       NULL,       1 << 2,       0,           -1 },
+	{ "Spotify",  NULL,       NULL,       1 << 8,       0,           -1 },
+	{ "stalonetray",	NULL, 		NULL, 		~0, 		0,		-1 }
 };
 
 /* layout(s) */
@@ -40,7 +42,7 @@ static const int resizehints = 1;    /* 1 means respect size hints in tiled resi
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "[]=",      gappstile },    /* first entry is default */
+	{ "",      gappstile },    /* first entry is default */
 	// { "><>",      NULL },    /* no layout function means floating behavior */
 	// { "[M]",      monocle },
 };
@@ -59,24 +61,29 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
-static const char *termcmd[]  = { "termite", NULL };
+static const char *termcmd[]  = { "st", NULL };
+static const char *codecmd[]  = { "vscode", NULL };
+static const char *browsercmd[]  = { "firefox", NULL };
+static const char *filemanagercmd[]  = { "nautilus", NULL };																																															
 
 /* autostart */
 static const char *autostart[] = {
-	"nm-applet",
+	"feh --bg-scale .bg",
 	"picom &",
 	"xset s off",
 	"xset -dpms",
 	"xset b 0",
-	"xss-lock /home/jimmy/Documents/Scripts/oftenused/lock.sh &",
-	"autorandr --change",
+	"/home/jimmy/.screenlayout/default.sh",
 	"/usr/bin/stalonetray -c /home/jimmy/.dwm/stalonetrayrc &"
 };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_r,      spawn,          {.v = dmenucmd } },
-	{ MODKEY,             					XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY,             			XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY,             			XK_a,	   spawn,          {.v = codecmd } },
+	{ MODKEY,             			XK_q,	   spawn,          {.v = browsercmd } },
+	{ MODKEY,												XK_e,			 spawn,					{.v = filemanagercmd}},
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
