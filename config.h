@@ -6,21 +6,28 @@ static const unsigned int snap      = 32;       /* snap pixel */
 static const unsigned int gappx     = 15;        /* gap pixel between windows */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "monospace:size=10" };
+static const char *fonts[]          = { "FontAwesome:pixelsize=14:antialias=true:autohint=true:hintstyle=hintfull" };
 static const char dmenufont[]       = "monospace:size=10";
-static const char col_gray1[]       = "#222222";
-static const char col_gray2[]       = "#444444";
-static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#005577";
+static const char col_gray1[]       = "#001900";
+static const char col_gray2[]       = "#001900";
+static const char col_gray3[]       = "#eeeeee";
+static const char col_gray4[]       = "#001900";
+static const char col_cyan[]        = "#eeeeee";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
 	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
 };
 
+static const unsigned int baralpha = 200;
+static const unsigned int borderalpha = OPAQUE;
+static const unsigned int alphas[][3]      = {
+	/*               fg      bg        border     */
+	[SchemeNorm] = { OPAQUE, baralpha, borderalpha },
+	[SchemeSel]  = { OPAQUE, baralpha, borderalpha },
+};
 /* tagging */
-static const char *tags[] = { "Browser", "Code", "Utilities", "4", "5", "6", "7", "8", "Music"};
+static const char *tags[] = { "", "", "", "1", "2", "3", ""};
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -31,7 +38,6 @@ static const Rule rules[] = {
 	{ "Firefox",  NULL,       NULL,       1,       0,           -1 },
 	{ "Code",  NULL,       NULL,       1 << 1,       0,           -1 },
 	{ "DBeaver",  NULL,       NULL,       1 << 2,       0,           -1 },
-	{ "Spotify",  NULL,       NULL,       1 << 8,       0,           -1 },
 	{ "stalonetray",	NULL, 		NULL, 		~0, 		0,		-1 }
 };
 
