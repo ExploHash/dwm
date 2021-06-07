@@ -76,7 +76,7 @@ static const char *screenshotcmd[]  = { "flameshot", "gui", NULL };
 
 /* autostart */
 static const char *autostart[] = {
-	"feh --bg-scale .bg",
+	"feh --bg-scale ~/.dwm/.bg",
 	"picom &",
 	"xset s off",
 	"xset -dpms",
