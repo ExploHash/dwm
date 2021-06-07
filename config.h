@@ -38,6 +38,7 @@ static const Rule rules[] = {
 	{ "Firefox",  NULL,       NULL,       1,       0,           -1 },
 	{ "Code",  NULL,       NULL,       1 << 1,       0,           -1 },
 	{ "DBeaver",  NULL,       NULL,       1 << 2,       0,           -1 },
+	{ "Postman",  NULL,       NULL,       1 << 2,       0,           -1 },
 	{ "stalonetray",	NULL, 		NULL, 		~0, 		0,		-1 }
 };
 
@@ -67,10 +68,11 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
-static const char *termcmd[]  = { "st", NULL };
+static const char *termcmd[]  = { "alacritty", NULL };
 static const char *codecmd[]  = { "vscode", NULL };
 static const char *browsercmd[]  = { "firefox", NULL };
 static const char *filemanagercmd[]  = { "nautilus", NULL };																																															
+static const char *screenshotcmd[]  = { "flameshot", "gui", NULL };																																															
 
 /* autostart */
 static const char *autostart[] = {
@@ -90,6 +92,7 @@ static Key keys[] = {
 	{ MODKEY,             			XK_a,	   spawn,          {.v = codecmd } },
 	{ MODKEY,             			XK_q,	   spawn,          {.v = browsercmd } },
 	{ MODKEY,												XK_e,			 spawn,					{.v = filemanagercmd}},
+	{ MODKEY,												XK_s,			 spawn,					{.v = screenshotcmd}},
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
